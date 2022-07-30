@@ -114,16 +114,20 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t adc_value[256];
   while (1)
   {
 	  char buff_usb[4096];
-	  static uint16_t adc_value[256];
 	  for(uint16_t i = 0; i < 256; i++){
+		  HAL_ADC_Start(&hadc1);
 		  adc_value[i] = HAL_ADC_GetValue(&hadc1);
 	  }
-	  sprintf(buff_usb, "%d\r\n", adc_value[255]);
-	  printf("Hello\r\n");
-	 // CDC_Transmit_FS(buff_usb, strlen(buff_usb));
+	  //sprintf(buff_usb, "%d\r\n", adc_value[255]);
+	  for(uint16_t i = 0; i < 256; i++){
+		  printf("%d\r\n", adc_value[i]);
+	  }
+
+	  CDC_Transmit_FS(buff_usb, strlen(buff_usb));
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
