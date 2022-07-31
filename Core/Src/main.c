@@ -112,7 +112,7 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint16_t adc_value[256];
+  uint16_t adc_value[2560];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,17 +121,18 @@ int main(void)
 
   while (1)
   {
-	  char buff_usb[4096];
-	  HAL_ADC_Start_DMA(&hadc1,(uint32_t *) &adc_value, 256);
-	  for(uint16_t i = 0; i < 256; i++){
-		  adc_value[i] = HAL_ADC_GetValue(&hadc1);
-	  }
-	  //sprintf(buff_usb, "%d\r\n", adc_value[255]);
-	  for(uint16_t i = 0; i < 256; i++){
-		  printf("%d\r\n", adc_value[i]);
-	  }
+	  char buff_usb[16];
 
-	  CDC_Transmit_FS(buff_usb, strlen(buff_usb));
+	  HAL_ADC_Start_DMA(&hadc1,(uint32_t *) &adc_value,2560);
+	  HAL_Delay(1000);
+	  printf("\r\n***************\r\n");
+	  for(uint16_t i = 0; i < 2560; i++){
+		  printf("%4d\n", adc_value[i]);
+		  sprintf(buff_usb, "%d\r\n", adc_value[i]);
+		  CDC_Transmit_FS(buff_usb, strlen(buff_usb));
+	  }
+	  printf("\r\n***************\r\n");
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -208,7 +209,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
